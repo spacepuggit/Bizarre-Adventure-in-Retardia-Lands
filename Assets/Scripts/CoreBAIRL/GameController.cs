@@ -1,60 +1,30 @@
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
-    [SerializeField] private MapGenerator mapGenerator;
-    [SerializeField] private GameObject playerPrefab;
-    
-    public TextMeshPro currentSceneText;
-    public TextMeshPro nextScenesText;
-    
     public Transform buttonContainer;
     public EventController eventController;
+    [SerializeField] private GameObject playerPrefab; // Keep this in GameController
 
-    // Start is called before the first frame update
+    private MapController mapController;
+    private PlayerSpawner playerSpawner;
+    private SceneController sceneController;
+
     void Start()
     {
-        mapGenerator.RecreateBoard();
-        SpawnPlayer();
-    }
+        mapController = new MapController();
+        playerSpawner = new PlayerSpawner(playerPrefab); // Pass playerPrefab here
+        sceneController = new SceneController();
 
-    void SpawnPlayer()
-    {
-        if (playerPrefab != null)
-        {
-            // Get the first point of interest
-            PointOfInterest firstPoint = mapGenerator.GetFirstPointOfInterest();
+        mapController.GenerateMap();
 
-            if (firstPoint != null)
-            {
-                // Instantiate the player at the position of the first point of interest
-                GameObject player = Instantiate(playerPrefab, firstPoint.transform.position, Quaternion.identity);
-                // Set the current point in the PlayerController script
-                PlayerController playerController = player.GetComponent<PlayerController>();
-                if (playerController != null)
-                {
-                    playerController.buttonContainer = buttonContainer;
-                    playerController.currentSceneText = currentSceneText;
-                    playerController.nextScenesText = nextScenesText;
-                    playerController.SetCurrentPoint(firstPoint);
-                    playerController.eventController = eventController;
-                }
-                else
-                {
-                    Debug.LogError("Player Prefab does not have a PlayerController script");
-                }
+        PointOfInterest firstPoint = mapController.GetFirstPointOfInterest();
+        PlayerController playerController = playerSpawner.SpawnPlayer(firstPoint);
 
-            }
-            else
-            {
-                Debug.LogError("No points of interest available for player spawn");
-            }
-        }
-        else
-        {
-            Debug.LogError("Player Prefab is not set in GameController");
-        }
+        playerController.buttonContainer = buttonContainer;
+        playerController.currentSceneText = sceneController.currentSceneText;
+        playerController.nextScenesText = sceneController.nextScenesText;
+        playerController.SetCurrentPoint(firstPoint);
+        playerController.eventController = eventController;
     }
 }
