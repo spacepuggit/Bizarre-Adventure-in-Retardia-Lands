@@ -108,7 +108,23 @@ public class Character : MonoBehaviour
         {
             return true;
         }
-
         return destroyedBodyParts >= totalBodyParts * destructionThreshold;
     }
+    
+    public void HighlightBodyPart(BodyPart part, bool highlight)
+    {
+        if (bodyPartsHealth.ContainsKey(part))
+        {
+            // Change the color of the sprite to highlight it
+            if (highlight)
+            {
+                bodyPartsHealth[part].Sprite.color = Color.red;
+            }
+            else
+            {
+                bodyPartsHealth[part].Sprite.color = Color.white;
+            }
+        }
+    }
+
 }
