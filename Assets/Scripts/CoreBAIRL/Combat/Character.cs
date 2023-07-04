@@ -42,6 +42,8 @@ public class Character : MonoBehaviour
     private int totalBodyParts;
     private int destroyedBodyParts = 0;
     
+    private IEnumerator highlightCoroutine;
+    
 
     private void Awake()
     {
@@ -122,20 +124,48 @@ public class Character : MonoBehaviour
     
     public void HighlightBodyPart(BodyPart part, bool highlight)
     {
-        if (bodyPartsHealth.ContainsKey(part))
+        // If a previous highlight coroutine is running, stop it
+        if (highlightCoroutine != null)
         {
-            // Change the color of the sprite to highlight it
-            if (highlight)
-            {
-                bodyPartsHealth[part].Sprite.color = Color.red;
-            }
-            else
-            {
-                bodyPartsHealth[part].Sprite.color = Color.white;
-            }
+            StopCoroutine(highlightCoroutine);
+            highlightCoroutine = null;
+        }
+
+        // If we want to highlight the body part, start a new coroutine
+        if (highlight)
+        {
+            highlightCoroutine = HighlightCoroutine(part);
+            StartCoroutine(highlightCoroutine);
+        }
+        else
+        {
+            // Otherwise, make sure the body part is visible
+            SetBodyPartVisibility(part, true);
         }
     }
-    
+
+    private IEnumerator HighlightCoroutine(BodyPart part)
+    {
+        // Alternate the visibility of the body part every few frames
+        while (true)
+        {
+            SetBodyPartVisibility(part, false);
+            yield return new WaitForSeconds(0.5f);
+            SetBodyPartVisibility(part, true);
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
+    private void SetBodyPartVisibility(BodyPart part, bool visible)
+    {
+        // Check if the body part exists in the dictionary
+        if (bodyPartsHealth.ContainsKey(part))
+        {
+            // Set the visibility of the SpriteRenderer associated with the body part
+            bodyPartsHealth[part].Sprite.enabled = visible;
+        }
+    }
+
     public void Defend()
     {
         isDefending = true;
