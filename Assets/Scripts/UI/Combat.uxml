@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:VisualElement name="CombatUI">
+        <ui:Button name="AttackButton">Attack</ui:Button>
+        <ui:Button name="DefendButton">Defend</ui:Button>
+    </ui:VisualElement>
+</ui:UXML>

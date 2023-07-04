@@ -1,0 +1,16 @@
+#CombatUI {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#BodyPartDropdown {
+    width: 200px;
+    margin-bottom: 20px;
+}
+
+#AttackButton, #DefendButton {
+    width: 100px;
+    height: 50px;
+    margin-bottom: 20px;
+}
