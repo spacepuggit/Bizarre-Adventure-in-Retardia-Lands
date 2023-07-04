@@ -62,17 +62,18 @@ public class CombatSystem
             OnTurnChanged?.Invoke(isPlayerTurn); // Fire event
         }
     }
-    
+
     public void Defend()
     {
-        // Implement your defense logic here. For example, you might want to reduce the damage taken on the next turn.
-    
-        // Switch turns after defending
-        isPlayerTurn = !isPlayerTurn;
-        OnTurnChanged?.Invoke(isPlayerTurn);
-        if (!isPlayerTurn)
+        if (isPlayerTurn)
         {
-            CoroutineHelper.Instance.StartHelperCoroutine(OpponentTurn());
+            player.Defend();
+            isPlayerTurn = !isPlayerTurn;
+            OnTurnChanged?.Invoke(isPlayerTurn);
+            if (!isPlayerTurn)
+            {
+                CoroutineHelper.Instance.StartHelperCoroutine(OpponentTurn());
+            }
         }
     }
 

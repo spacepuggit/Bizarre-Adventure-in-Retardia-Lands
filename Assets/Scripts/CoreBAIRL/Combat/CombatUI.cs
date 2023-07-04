@@ -6,10 +6,11 @@ public class CombatUI : MonoBehaviour
     private VisualElement rootElement;
     private Button attackButton;
     private Button defendButton;
+    private CombatSystem combatSystem;
 
     private void Start()
     {
-        // Get a reference to the root UI document
+        combatSystem = ServiceLocator.Instance.Get<CombatSystem>();
         var uiDocument = GetComponent<UIDocument>();
         rootElement = uiDocument.rootVisualElement;
 
@@ -24,11 +25,18 @@ public class CombatUI : MonoBehaviour
 
     private void OnAttackButtonClicked()
     {
-        // Handle attack button click
+        BodyPart chosenPart = GetChosenBodyPart();
+        
+        combatSystem.Attack(chosenPart);
     }
 
     private void OnDefendButtonClicked()
     {
-        // Handle defend button click
+        combatSystem.Defend();
+    }
+    
+    private BodyPart GetChosenBodyPart()
+    {
+        return BodyPart.Head;
     }
 }

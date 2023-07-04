@@ -36,10 +36,12 @@ public class Character : MonoBehaviour
     public float flickerDuration = 0.5f;
     public float flickerSpeed = 0.1f;
     public List<BodyPartStatusEntry> bodyPartStatusEntries;
+    public bool isDefending = false;
 
     private Dictionary<BodyPart, BodyPartHealth> bodyPartsHealth;
     private int totalBodyParts;
     private int destroyedBodyParts = 0;
+    
 
     private void Awake()
     {
@@ -55,6 +57,13 @@ public class Character : MonoBehaviour
     public void TakeDamage(BodyPart part, int damage)
     {
         if (!bodyPartsHealth.ContainsKey(part) || bodyPartsHealth[part].IsDestroyed) return;
+        
+        if (isDefending)
+        {
+            damage /= 2;
+            isDefending = false;
+        }
+        
         bodyPartsHealth[part].Health -= damage;
         StartCoroutine(Flicker(bodyPartsHealth[part].Sprite));
 
@@ -125,6 +134,11 @@ public class Character : MonoBehaviour
                 bodyPartsHealth[part].Sprite.color = Color.white;
             }
         }
+    }
+    
+    public void Defend()
+    {
+        isDefending = true;
     }
 
 }
