@@ -124,25 +124,20 @@ public class Character : MonoBehaviour
     
     public void HighlightBodyPart(BodyPart part, bool highlight)
     {
-        // If a previous highlight coroutine is running, stop it
-        if (highlightCoroutine != null)
+        if (bodyPartsHealth.ContainsKey(part))
         {
-            StopCoroutine(highlightCoroutine);
-            highlightCoroutine = null;
-        }
-
-        // If we want to highlight the body part, start a new coroutine
-        if (highlight)
-        {
-            highlightCoroutine = HighlightCoroutine(part);
-            StartCoroutine(highlightCoroutine);
-        }
-        else
-        {
-            // Otherwise, make sure the body part is visible
-            SetBodyPartVisibility(part, true);
+            if (highlight)
+            {
+                StartCoroutine(Flicker(bodyPartsHealth[part].Sprite));
+            }
+            else
+            {
+                StopCoroutine(Flicker(bodyPartsHealth[part].Sprite));
+                bodyPartsHealth[part].Sprite.color = Color.white;
+            }
         }
     }
+
 
     private IEnumerator HighlightCoroutine(BodyPart part)
     {

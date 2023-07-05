@@ -10,6 +10,7 @@ public class CombatUI : MonoBehaviour
     private CombatSystem combatSystem;
     private Character enemy;
     private BodyPart selectedBodyPart = BodyPart.Head;
+    private BodyPart lastHighlightedBodyPart = BodyPart.Head;
 
     private void Start()
     {
@@ -42,13 +43,33 @@ public class CombatUI : MonoBehaviour
             selectedBodyPart = GetPreviousBodyPart(selectedBodyPart);
         }
 
-        // Highlight the selected body part on the enemy character
-        enemy.HighlightBodyPart(selectedBodyPart, true);
+        // Only highlight the selected body part if it has changed
+        if (selectedBodyPart != lastHighlightedBodyPart)
+        {
+            // Unhighlight the last highlighted body part
+            enemy.HighlightBodyPart(lastHighlightedBodyPart, false);
+
+            // Highlight the selected body part on the enemy character
+            enemy.HighlightBodyPart(selectedBodyPart, true);
+
+            lastHighlightedBodyPart = selectedBodyPart;
+        }
     }
 
     private void OnAttackButtonClicked()
     {
-        combatSystem.Attack(selectedBodyPart);
+        if (combatSystem.state == CombatState.Idle)
+        {
+            combatSystem.StartAttack();
+            defendButton.visible = false;
+            // Enable body part selection
+        }
+        else if (combatSystem.state == CombatState.SelectingAttackTarget)
+        {
+            combatSystem.EndAttack(selectedBodyPart);
+            defendButton.visible = true;
+            // Disable body part selection
+        }
     }
 
     private void OnDefendButtonClicked()

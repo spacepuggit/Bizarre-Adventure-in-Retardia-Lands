@@ -3,6 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum CombatState
+{
+    Idle,
+    SelectingAttackTarget,
+    Attacking,
+    Defending
+}
+
 public class CombatSystem
 {
     public Character player;
@@ -10,6 +18,7 @@ public class CombatSystem
     public bool isPlayerTurn = true;
 
     private EnemyAI enemyAI;
+    public CombatState state = CombatState.Idle;
     
     public event Action<bool> OnTurnChanged;
     public event Action<string> OnVictory;
@@ -27,6 +36,27 @@ public class CombatSystem
         yield return new WaitForSeconds(1);
         var partToAttack = enemyAI.ChooseBodyPartToAttack();
         Attack(partToAttack);
+    }
+    
+    public void StartAttack()
+    {
+        if (state == CombatState.Idle)
+        {
+            state = CombatState.SelectingAttackTarget;
+        }
+        else if (state == CombatState.SelectingAttackTarget)
+        {
+            state = CombatState.Attacking;
+        }
+    }
+
+    public void EndAttack(BodyPart part)
+    {
+        if (state == CombatState.Attacking)
+        {
+            Attack(part);
+            state = CombatState.Idle;
+        }
     }
 
     public void Attack(BodyPart part)
